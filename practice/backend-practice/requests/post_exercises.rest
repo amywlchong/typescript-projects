@@ -1,0 +1,28 @@
+###
+# @name correctlyFormatted
+POST http://localhost:3002/exercises
+Content-Type: application/json
+
+{
+  "daily_exercises": [1, 0, 2, 0, 3, 0, 2.5],
+  "target": 2.5
+}
+
+###
+# @name incorrectlyFormatted
+POST http://localhost:3002/exercises
+Content-Type: application/json
+
+{
+  "daily_exercises": [1, "two", 3],
+  "target": 2.5
+}
+
+###
+# @name missingData
+POST http://localhost:3002/exercises
+Content-Type: application/json
+
+{
+  "daily_exercises": [1, 0, 2, 0, 3, 0, 2.5]
+}
