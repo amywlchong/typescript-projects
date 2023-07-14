@@ -1,11 +1,11 @@
 import { NewPatient, Gender } from '../types';
 
-const isString = (text: unknown): text is string => {
-  return typeof text === 'string' || text instanceof String;
-};
+const isNonEmptyString = (text: unknown): text is string => {
+  if (typeof text !== 'string') {
+    return false;
+  }
 
-const isNonEmptyString = (name: string): boolean => {
-    return /\p{L}/gu.test(name);
+  return !/^\s*$/.test(text);
 };
 
 const isDate = (date: string): boolean => {
@@ -21,23 +21,31 @@ const isGender = (param: string): param is Gender => {
 };
 
 const parseName = (name: unknown): string => {
-  if (!isString(name) || !isNonEmptyString(name)) {
-    throw new Error('Malformatted name');
+  if (!isNonEmptyString(name)) {
+    throw new Error('Missing or malformatted name');
   }
 
   return name;
 };
 
-const parseDateOfBirth = (dateOfBirth: unknown): Date => {
-  if (!dateOfBirth || !isString(dateOfBirth) || !isDate(dateOfBirth)) {
+const parseDateOfBirth = (dateOfBirth: unknown): Date | undefined => {
+  if (!dateOfBirth) {
+    return undefined;
+  }
+
+  if (!isNonEmptyString(dateOfBirth) || !isDate(dateOfBirth)) {
     throw new Error('Malformatted date of birth');
   }
 
   return new Date(dateOfBirth);
 };
 
-const parseIDCardNumber = (idCardNumber: unknown): string => {
-  if (!isString(idCardNumber) || !isIDCardNumber(idCardNumber)) {
+const parseIDCardNumber = (idCardNumber: unknown): string | undefined => {
+  if (!idCardNumber) {
+    return undefined;
+  }
+
+  if (!isNonEmptyString(idCardNumber) || !isIDCardNumber(idCardNumber)) {
     throw new Error('Malformatted id card number');
   }
 
@@ -45,16 +53,16 @@ const parseIDCardNumber = (idCardNumber: unknown): string => {
 };
 
 const parseGender = (gender: unknown): Gender => {
-  if (!isString(gender) || !isGender(gender)) {
-    throw new Error('Malformatted gender');
+  if (!isNonEmptyString(gender) || !isGender(gender)) {
+    throw new Error('Missing or malformatted gender');
   }
 
   return gender;
 };
 
 const parseOccupation = (occupation: unknown): string => {
-  if (!isString(occupation) || !isNonEmptyString(occupation)) {
-    throw new Error('Malformatted occupation');
+  if (!isNonEmptyString(occupation)) {
+    throw new Error('Missing or malformatted occupation');
   }
 
   return occupation;
@@ -83,7 +91,7 @@ const toNewPatient = (object: unknown): NewPatient => {
     return newPatient;
   }
 
-  throw new Error('Incorrect data: some fields are missing');
+  throw new Error('Some fields are missing');
 };
 
 export default toNewPatient;
