@@ -52,26 +52,24 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
       <form onSubmit={addPatient}>
         <TextField
           label="Name"
-          fullWidth
           value={name}
           onChange={({ target }) => setName(target.value)}
         />
         <TextField
           label="ID card number"
-          fullWidth
           value={idCardNumber}
           onChange={({ target }) => setIDCardNumber(target.value)}
         />
         <TextField
+          sx={{ marginTop: '20px' }}
           label="Date of birth"
-          placeholder="YYYY-MM-DD"
-          fullWidth
+          type="date"
           value={dateOfBirth}
           onChange={({ target }) => setDateOfBirth(target.value)}
+          InputLabelProps={{ shrink: true }}
         />
         <TextField
           label="Occupation"
-          fullWidth
           value={occupation}
           onChange={({ target }) => setOccupation(target.value)}
         />
@@ -79,7 +77,6 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
         <InputLabel style={{ marginTop: 20 }}>Gender</InputLabel>
         <Select
           label="Gender"
-          fullWidth
           value={gender}
           onChange={onGenderChange}
         >
@@ -93,27 +90,22 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
         )}
         </Select>
 
-        <Grid>
+        <Grid container justifyContent="space-between">
           <Grid item>
             <Button
-              color="secondary"
-              variant="contained"
-              style={{ float: 'left' }}
-              type="button"
-              onClick={onCancel}
+                variant="outlined"
+                type="button"
+                onClick={onCancel}
             >
-              Cancel
+                Cancel
             </Button>
           </Grid>
           <Grid item>
             <Button
-              style={{
-                float: 'right',
-              }}
-              type="submit"
-              variant="contained"
+                type="submit"
+                variant="contained"
             >
-              Add
+                Add
             </Button>
           </Grid>
         </Grid>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom'
 import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
 import axios from 'axios';
@@ -8,6 +8,8 @@ import AddPatientModal from '../AddPatientModal';
 
 import patientService from '../../services/patients';
 
+import { NotificationContext, NotificationStatus, NotificationLocation } from '../../contexts/NotificationContext';
+
 interface Props {
   patients : Patient[]
   setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
@@ -16,13 +18,12 @@ interface Props {
 const PatientListPage = ({ patients, setPatients } : Props ) => {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
+  const [, showNotification] = useContext(NotificationContext);
 
   const openModal = (): void => setModalOpen(true);
 
   const closeModal = (): void => {
     setModalOpen(false);
-    setError(undefined);
   };
 
   const submitNewPatient = async (values: PatientFormValues) => {
@@ -35,14 +36,14 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
         if (error?.response?.data && typeof error?.response?.data === 'string') {
           const message = error.response.data;
           console.error(message);
-          setError(message);
+          showNotification(message, NotificationStatus.Error, NotificationLocation.Form);
         } else {
           console.error('Unrecognized axios error', error);
-          setError('An error occurred while adding the patient.');
+          showNotification('An error occurred while adding the patient.', NotificationStatus.Error, NotificationLocation.Form);
         }
       } else {
         console.error('Unknown error', error);
-        setError('An error occurred while adding the patient.');
+        showNotification('An error occurred while adding the patient.', NotificationStatus.Error, NotificationLocation.Form);
       }
     }
   };
@@ -75,7 +76,6 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
       <AddPatientModal
         modalOpen={modalOpen}
         onSubmit={submitNewPatient}
-        error={error}
         onClose={closeModal}
       />
       <Button variant="contained" onClick={() => openModal()}>

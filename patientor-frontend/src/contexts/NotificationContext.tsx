@@ -5,20 +5,26 @@ export enum NotificationStatus {
   Error = 'error'
 }
 
+export enum NotificationLocation {
+  Form = 'form',
+  PageTop = 'page-top'
+}
+
 interface NotificationState {
   message: string | null;
   status: NotificationStatus | null;
+  location: NotificationLocation | null;
 }
 
 type Action =
-  | { type: 'SET_NOTIFICATION'; payload: { message: string; status: NotificationStatus } }
+  | { type: 'SET_NOTIFICATION'; payload: { message: string; status: NotificationStatus; location: NotificationLocation } }
   | { type: 'CLEAR_NOTIFICATION' };
 
-const initialState: NotificationState = { message: null, status: null };
+const initialState: NotificationState = { message: null, status: null, location: null };
 
 type NotificationContextValues = [
   NotificationState | undefined,
-  ((message: string, status: NotificationStatus) => void) | (() => void)
+  ((message: string, status: NotificationStatus, location: NotificationLocation) => void) | (() => void)
 ]
 
 export const NotificationContext = createContext<NotificationContextValues>([undefined, () => {
@@ -28,7 +34,11 @@ export const NotificationContext = createContext<NotificationContextValues>([und
 const notificationReducer = (state: NotificationState, action: Action): NotificationState => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
-      return { message: action.payload.message, status: action.payload.status };
+      return {
+        message: action.payload.message,
+        status: action.payload.status,
+        location: action.payload.location
+      };
     case 'CLEAR_NOTIFICATION':
       return initialState;
     default:
@@ -43,12 +53,12 @@ interface NotificationContextProviderProps {
 export const NotificationContextProvider = ({ children }: NotificationContextProviderProps) => {
   const [notification, notificationDispatch] = useReducer(notificationReducer, initialState);
 
-  const showNotification = (message: string, status: NotificationStatus): void => {
-    notificationDispatch({ type: 'SET_NOTIFICATION', payload: { message, status } });
+  const showNotification = (message: string, status: NotificationStatus, location: NotificationLocation): void => {
+    notificationDispatch({ type: 'SET_NOTIFICATION', payload: { message, status, location } });
 
     setTimeout(() => {
       notificationDispatch({ type: 'CLEAR_NOTIFICATION' });
-    }, 5000);
+    }, 7000);
   };
 
   return (

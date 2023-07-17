@@ -9,11 +9,11 @@ import patientService from './services/patients';
 import PatientListPage from './components/PatientListPage';
 import PatientPage from './components/PatientPage'
 
-import { NotificationStatus, NotificationContext } from './contexts/NotificationContext';
+import { NotificationContext, NotificationStatus, NotificationLocation } from './contexts/NotificationContext';
 import Notification from './components/Notification'
 
 const App = () => {
-  const [, showNotification] = useContext(NotificationContext);
+  const [notification, showNotification] = useContext(NotificationContext);
 
   const [patients, setPatients] = useState<Patient[]>([]);
 
@@ -24,10 +24,10 @@ const App = () => {
       setPatients(patients);
       } catch (error: unknown) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
-          showNotification('Patients not found.', NotificationStatus.Error);
+          showNotification('Patients not found.', NotificationStatus.Error, NotificationLocation.PageTop);
         } else {
           console.error(error);
-          showNotification('An error occurred while fetching the patient data.', NotificationStatus.Error);
+          showNotification('An error occurred while fetching the patient data.', NotificationStatus.Error, NotificationLocation.PageTop);
         }
       }
     };
@@ -44,8 +44,8 @@ const App = () => {
           <Button component={Link} to="/" variant="contained" color="primary">
             Home
           </Button>
+          {notification?.location === NotificationLocation.PageTop && <Notification />}
           <Divider hidden />
-          <Notification />
           <Routes>
             <Route path="/" element={<PatientListPage patients={patients} setPatients={setPatients} />} />
             <Route path="/patients/:id" element={<PatientPage />} />

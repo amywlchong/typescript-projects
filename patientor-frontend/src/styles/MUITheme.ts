@@ -47,7 +47,17 @@ const themeOptions: ThemeOptions = {
         },
       ],
     },
-  },
+    MuiTextField: {
+      defaultProps: {
+        fullWidth: true
+      }
+    },
+    MuiSelect: {
+      defaultProps: {
+        fullWidth: true
+      }
+    }
+  }
 }
 
 export const theme = createTheme(themeOptions)

@@ -13,7 +13,7 @@ const Notification = () => {
   const status = notification?.status
 
   return (
-    <Alert severity={status || 'info'}>
+    <Alert severity={status || 'info'} sx={{position: 'static'}}>
       {notification?.message}
     </Alert>
   )

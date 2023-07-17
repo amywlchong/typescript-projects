@@ -2,14 +2,15 @@ import axios from 'axios'
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Patient, Diagnosis, Entry } from '../../types';
+import { Patient, Diagnosis, EntryWithoutId } from '../../types';
+import Entry from './Entry';
+import AddEntryForm from './AddEntryForm';
 import patientService from '../../services/patients'
 import diagnosisService from '../../services/diagnoses'
-import HealthRatingBar from '../HealthRatingBar';
 
-import { NotificationStatus, NotificationContext } from '../../contexts/NotificationContext';
+import { NotificationStatus, NotificationLocation, NotificationContext } from '../../contexts/NotificationContext';
 
-import { Typography, Container, List, ListItem, Paper } from '@mui/material';
+import { Typography, Button, Box } from '@mui/material';
 
 const PatientPage = () => {
   const [, showNotification] = useContext(NotificationContext);
@@ -20,13 +21,14 @@ const PatientPage = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEntryFormVisible, setIsEntryFormVisible] = useState(false);
 
   const handleErrors = (error: unknown, message: string): void => {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
-      showNotification(message, NotificationStatus.Error);
+      showNotification(message, NotificationStatus.Error, NotificationLocation.PageTop);
     } else {
       console.error(error);
-      showNotification('An error occurred while fetching data.', NotificationStatus.Error);
+      showNotification('An error occurred while fetching data.', NotificationStatus.Error, NotificationLocation.PageTop);
     }
   };
 
@@ -66,6 +68,41 @@ const PatientPage = () => {
     return <div>Patient not found.</div>;
   }
 
+  const ShowEntryForm = () => {
+    setIsEntryFormVisible(true);
+  }
+
+  const hideEntryForm = () => {
+    setIsEntryFormVisible(false);
+  }
+
+  const submitNewEntry = async (entryValues: EntryWithoutId) => {
+    try {
+      const entry = await patientService.createEntry(patient.id, entryValues);
+      setPatient(
+        {
+          ...patient,
+          entries: patient.entries.concat(entry)
+        }
+      );
+      setIsEntryFormVisible(false);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error?.response?.data && typeof error?.response?.data === 'string') {
+          const message = error.response.data;
+          console.error(message);
+          showNotification(message, NotificationStatus.Error, NotificationLocation.Form);
+        } else {
+          console.error('Unrecognized axios error', error);
+          showNotification('An error occurred while adding the entry', NotificationStatus.Error, NotificationLocation.Form);
+        }
+      } else {
+        console.error('Unknown error', error);
+        showNotification('An error occurred while adding the entry', NotificationStatus.Error, NotificationLocation.Form);
+      }
+    }
+  };
+
   const formatDate = (date: string | undefined): string | undefined => {
     return date?.split('T')[0];
   }
@@ -75,84 +112,42 @@ const PatientPage = () => {
     return matchedDiagnosis?.name || 'Unknown';
   }
 
-  const assertNever = (value: never): never => {
-    throw new Error(
-      `Unhandled discriminated union member: ${JSON.stringify(value)}`
-    );
-  };
-
-  const entryDetails = (entry: Entry) => {
-    switch(entry.type) {
-      case 'Hospital':
-        return <Typography variant="body1">Discharged on {entry.discharge.date}: {entry.discharge.criteria}</Typography>;
-      case 'OccupationalHealthcare':
-        return <Typography variant="body1">{entry.sickLeave ? `Sick leave from ${entry.sickLeave.startDate} to ${entry.sickLeave.endDate}. ` : ''} Employer name: {entry.employerName}.</Typography>;
-      case 'HealthCheck':
-        return <HealthRatingBar showText={false} rating={entry.healthCheckRating} />;
-      default:
-        return assertNever(entry);
-    }
-  }
-
   return (
-    <Container>
-      <Typography variant="h2">{patient.name}</Typography>
-      <Typography variant="body1">Gender: {patient.gender}</Typography>
-      <Typography variant="body1">Date of birth: {formatDate(patient.dateOfBirth) || 'Unknown'}</Typography>
-      <Typography variant="body1">ID card number: {patient.idCardNumber || 'Unknown'}</Typography>
-      <Typography variant="body1">Occupation: {patient.occupation}</Typography>
-      <Typography variant="h3">Entries</Typography>
-      {patient.entries && patient.entries.length > 0
-        ? patient.entries
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .map(entry => (
-            <Paper
-              elevation={1}
-              sx={{
-                padding: '1em',
-                border: '1px solid #ccc',
-                borderRadius: '5px',
-                marginBottom: '1em',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-              key={entry.id}
-            >
-              <div>
-                <Typography variant="body1">Date: {formatDate(entry.date)}</Typography>
-                <Typography variant="body1" sx={{ fontStyle: 'italic' }}>Description: {entry.description}</Typography>
+    <div>
+      <Box sx={{margin: '0.6em 0'}}>
+        <Typography variant="h2">{patient.name}</Typography>
+        <Typography variant="body1">Gender: {patient.gender}</Typography>
+        <Typography variant="body1">Date of birth: {formatDate(patient.dateOfBirth) || 'Unknown'}</Typography>
+        <Typography variant="body1">ID card number: {patient.idCardNumber || 'Unknown'}</Typography>
+        <Typography variant="body1">Occupation: {patient.occupation}</Typography>
+      </Box>
 
-                <Typography variant="body1">
-                  Diagnosis details:
-                </Typography>
-                {entry.diagnosisCodes && entry.diagnosisCodes.length > 0
-                  ? <List sx={{ padding: '0 1em', listStyleType: 'disc' }}>
-                      {entry.diagnosisCodes.map((code, index) => (
-                        <ListItem
-                          key={index}
-                          sx={{
-                            typography: 'body1',
-                            display: 'list-item',
-                            paddingLeft: '10px'
-                          }}
-                        >
-                          {code}: {getDiagnosisName(code)}
-                        </ListItem>
-                      ))}
-                    </List>
-                  : <Typography variant="body2" sx={{paddingLeft: '10px'}}>No details</Typography>
-                }
-                {entryDetails(entry)}
-              </div>
-              <div style={{alignSelf: 'flex-end'}}>
-                <Typography variant="body1">Diagnosed by {entry.specialist}</Typography>
-              </div>
-            </Paper>
-          ))
-        : <Typography variant="body1">No entries</Typography>
-      }
-    </Container>
+      <Box sx={{margin: '0.6em 0'}}>
+        {isEntryFormVisible &&
+          <AddEntryForm onCancel={hideEntryForm} onSubmit={submitNewEntry} diagnosisData={diagnoses} />}
+        {!isEntryFormVisible &&
+        <Button variant="contained" onClick={ShowEntryForm}>
+          Add New Entry
+        </Button>}
+      </Box>
+
+      <Box sx={{margin: '0.6em 0'}}>
+        <Typography variant="h3">Entries</Typography>
+        {patient.entries && patient.entries.length > 0
+          ? patient.entries
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map(entry => (
+              <Entry
+                key={entry.id}
+                entry={entry}
+                getDiagnosisName={getDiagnosisName}
+                formatDate={formatDate}
+              />
+            ))
+          : <Typography variant="body1">No entries</Typography>
+        }
+      </Box>
+    </div>
   );
 };
 
