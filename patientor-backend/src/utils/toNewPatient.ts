@@ -1,4 +1,5 @@
 import { NewPatient, Gender } from '../types';
+import UserInputError from '../errors/UserInputError';
 
 const isNonEmptyString = (text: unknown): text is string => {
   if (typeof text !== 'string') {
@@ -22,7 +23,7 @@ const isGender = (param: string): param is Gender => {
 
 const parseName = (name: unknown): string => {
   if (!isNonEmptyString(name)) {
-    throw new Error('Missing or malformatted name');
+    throw new UserInputError('Missing or malformatted name');
   }
 
   return name;
@@ -34,7 +35,7 @@ const parseDateOfBirth = (dateOfBirth: unknown): Date | undefined => {
   }
 
   if (!isNonEmptyString(dateOfBirth) || !isDate(dateOfBirth)) {
-    throw new Error('Malformatted date of birth');
+    throw new UserInputError('Malformatted date of birth');
   }
 
   return new Date(dateOfBirth);
@@ -46,7 +47,7 @@ const parseIDCardNumber = (idCardNumber: unknown): string | undefined => {
   }
 
   if (!isNonEmptyString(idCardNumber) || !isIDCardNumber(idCardNumber)) {
-    throw new Error('Malformatted id card number');
+    throw new UserInputError('Malformatted id card number');
   }
 
   return idCardNumber;
@@ -54,7 +55,7 @@ const parseIDCardNumber = (idCardNumber: unknown): string | undefined => {
 
 const parseGender = (gender: unknown): Gender => {
   if (!isNonEmptyString(gender) || !isGender(gender)) {
-    throw new Error('Missing or malformatted gender');
+    throw new UserInputError('Missing or malformatted gender');
   }
 
   return gender;
@@ -62,7 +63,7 @@ const parseGender = (gender: unknown): Gender => {
 
 const parseOccupation = (occupation: unknown): string => {
   if (!isNonEmptyString(occupation)) {
-    throw new Error('Missing or malformatted occupation');
+    throw new UserInputError('Missing or malformatted occupation');
   }
 
   return occupation;
@@ -70,7 +71,7 @@ const parseOccupation = (occupation: unknown): string => {
 
 const toNewPatient = (object: unknown): NewPatient => {
   if ( !object || typeof object !== 'object' ) {
-    throw new Error('Incorrect or missing data');
+    throw new UserInputError('Incorrect or missing data');
   }
 
   if ('name' in object && 'gender' in object && 'occupation' in object) {
@@ -91,7 +92,7 @@ const toNewPatient = (object: unknown): NewPatient => {
     return newPatient;
   }
 
-  throw new Error('Some fields are missing');
+  throw new UserInputError('Some fields are missing');
 };
 
 export default toNewPatient;
