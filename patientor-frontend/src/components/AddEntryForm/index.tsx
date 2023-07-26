@@ -1,6 +1,10 @@
-import { useState, useContext, SyntheticEvent } from 'react';
+import { useState, useContext, FormEvent } from 'react';
 
-import { TextField, InputLabel, MenuItem, Select, Grid, Button, SelectChangeEvent, FormControl } from '@mui/material';
+import { TextField, MenuItem, SelectChangeEvent } from '@mui/material';
+import { customMarginTop } from '../../styles/styles';
+import FormButtons from '../FormComponents/FormButtons'
+import SingleSelect from '../FormComponents/SingleSelect'
+import MultiSelect from '../FormComponents/MultiSelect'
 
 import { Diagnosis, EntryType, EntryWithoutId, HealthCheckRating } from '../../types';
 
@@ -13,8 +17,8 @@ import Notification from '../Notification'
 
 interface Props {
   onCancel: () => void;
-  onSubmit: (entryValues: EntryWithoutId) => void;
-  diagnosisData: Diagnosis[];
+  onSubmit: (entryValues: EntryWithoutId) => Promise<void>;
+  diagnosisDescriptions: Diagnosis[];
 }
 
 interface TypeOption {
@@ -26,15 +30,15 @@ const typeOptions: TypeOption[] = Object.values(EntryType).map(v => ({
   value: v, label: v.toString()
 }));
 
-const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
+const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
 
   const [notification, showNotification] = useContext(NotificationContext);
 
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
-  const [diagnosisCodes, setDiagnosisCodes] = useState(['']);
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [specialist, setSpecialist] = useState('');
-  const [type, setType] = useState<EntryType | null>(null);
+  const [entryType, setEntryType] = useState<EntryType | null>(null);
 
   const [dischargeDate, setDischargeDate] = useState('');
   const [dischargeCriteria, setDischargeCriteria] = useState('');
@@ -46,17 +50,14 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
   const [healthCheckRating, setHealthCheckRating] = useState<number | null>(null);
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
-    event.preventDefault();
-    if ( typeof event.target.value === 'string') {
-      const value = event.target.value;
-      const type = Object.values(EntryType).find(t => t.toString() === value);
-      if (type) {
-        setType(type);
-      }
+    const value = event.target.value;
+    const type = Object.values(EntryType).find(t => t.toString() === value);
+    if (type) {
+      setEntryType(type);
     }
   };
 
-  const addEntry = (event: SyntheticEvent) => {
+  const addEntry = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const baseEntry = {
@@ -66,18 +67,18 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
       specialist
     }
 
-    switch(type) {
+    switch(entryType) {
       case EntryType.Hospital:
         onSubmit({
           ...baseEntry,
-          type,
+          type: entryType,
           discharge: {date: dischargeDate, criteria: dischargeCriteria}
         })
         break;
         case EntryType.OccupationalHealthcare:
           onSubmit({
             ...baseEntry,
-            type,
+            type: entryType,
             employerName,
             sickLeave: {startDate: sickLeaveStart, endDate: sickLeaveEnd}
           })
@@ -86,7 +87,7 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
           if (Object.values(HealthCheckRating).some(rating => rating === healthCheckRating)) {
             onSubmit({
               ...baseEntry,
-              type,
+              type: entryType,
               healthCheckRating: healthCheckRating as HealthCheckRating
             })
           } else {
@@ -94,16 +95,16 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
           }
           break;
       default:
-        showNotification('Missing or incorrect type', NotificationStatus.Error, NotificationLocation.Form);
+        showNotification('Missing or incorrect entry type', NotificationStatus.Error, NotificationLocation.Form);
     }
   };
 
   return (
     <div>
-      {notification?.location === NotificationLocation.Form ? <Notification /> : <></>}
+      {notification?.location === NotificationLocation.Form && <Notification />}
       <form onSubmit={addEntry}>
         <TextField
-          sx={{ marginTop: '20px' }}
+          sx={customMarginTop}
           label="Date"
           type="date"
           value={date}
@@ -115,43 +116,29 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <FormControl fullWidth sx={{ marginTop: '20px' }}>
-          <InputLabel>Diagnosis Codes</InputLabel>
-          <Select
-            multiple
-            value={diagnosisCodes}
-            onChange={({ target }) => setDiagnosisCodes(diagnosisCodes.concat(target.value))}
-          >
-            {diagnosisData.map((diagnosis) => (
-              <MenuItem key={diagnosis.code} value={diagnosis.code}>
-                {diagnosis.code}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <MultiSelect
+          label={'Diagnosis Codes'}
+          selectedOptions={diagnosisCodes}
+          setSelectedOptions={setDiagnosisCodes}
+          menuItems={diagnosisDescriptions.map((diagnosis) => (
+            <MenuItem key={diagnosis.code} value={diagnosis.code}>
+              {diagnosis.code} {diagnosis.name}
+            </MenuItem>
+          ))}
+        />
         <TextField
           label="Specialist"
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
+        <SingleSelect
+          options={typeOptions}
+          label={'Entry Type'}
+          selectedOption={entryType}
+          onOptionChange={onTypeChange}
+        />
 
-        <InputLabel style={{ marginTop: 20 }}>Entry Type</InputLabel>
-        <Select
-          label="Entry Type"
-          value={type?.toString() || ''}
-          onChange={onTypeChange}
-        >
-        {typeOptions.map(option =>
-          <MenuItem
-            key={option.label}
-            value={option.value}
-          >
-            {option.label
-          }</MenuItem>
-        )}
-        </Select>
-
-        {type === EntryType.Hospital &&
+        {entryType === EntryType.Hospital &&
           <HospitalEntryFields
             date={dischargeDate}
             setDate={setDischargeDate}
@@ -160,7 +147,7 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
           />
         }
 
-        {type === EntryType.OccupationalHealthcare &&
+        {entryType === EntryType.OccupationalHealthcare &&
           <OHCEntryFields
             employerName={employerName}
             setEmployerName={setEmployerName}
@@ -170,31 +157,14 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisData }: Props) => {
             setSickLeaveEnd={setSickLeaveEnd} />
         }
 
-        {type === EntryType.HealthCheck &&
+        {entryType === EntryType.HealthCheck &&
           <HealthCheckEntryFields
             healthCheckRating={healthCheckRating}
             setHealthCheckRating={setHealthCheckRating} />
         }
 
-        <Grid container justifyContent="space-between">
-          <Grid item>
-            <Button
-                variant="outlined"
-                type="button"
-                onClick={onCancel}
-            >
-                Cancel
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-                type="submit"
-                variant="contained"
-            >
-                Add
-            </Button>
-          </Grid>
-        </Grid>
+        <FormButtons onCancel={onCancel} />
+
       </form>
     </div>
   );

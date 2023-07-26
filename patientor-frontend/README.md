@@ -33,10 +33,12 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Learn More
+### `npm run lint`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Identifies and reports on potential issues in TypeScript code, ensuring adherence to certain coding standards and style guidelines, thereby helping to maintain code quality.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Services and Tools Needed
 
-[React TypeScript cheetseat](https://react-typescript-cheatsheet.netlify.app/)
+Npm: You'll need npm (Node Package Manager) installed on your machine for the development of this application. Npm is used to manage and install development tools and libraries.
+
+Backend Server: The app uses Axios to make HTTP requests to a backend server. Make sure you have the backend server from [patientor-backend](https://github.com/amywlchong/typescript-projects/tree/master/patientor-backend) running. The server should be running on http://localhost:3001, as specified by the proxy setting in the package.json file. Ensure the backend server is correctly set up and running to fully interact with the frontend.

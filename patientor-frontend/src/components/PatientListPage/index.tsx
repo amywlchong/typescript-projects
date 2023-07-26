@@ -1,24 +1,27 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom'
-import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
-import axios from 'axios';
 
+import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
+import { customMarginBottom } from '../../styles/styles';
+
+import usePatientsState from '../../hooks/usePatientsState';
 import { PatientFormValues, Patient } from '../../types';
+import { NotificationContext, NotificationStatus, NotificationLocation } from '../../contexts/NotificationContext';
 import AddPatientModal from '../AddPatientModal';
 
-import patientService from '../../services/patients';
+const PatientListPage = () => {
 
-import { NotificationContext, NotificationStatus, NotificationLocation } from '../../contexts/NotificationContext';
-
-interface Props {
-  patients : Patient[]
-  setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
-}
-
-const PatientListPage = ({ patients, setPatients } : Props ) => {
-
+  const { patients, loadingPatients, errorMessageFetchingPatients, createNewPatient } = usePatientsState();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [, showNotification] = useContext(NotificationContext);
+
+  if (loadingPatients) {
+    return <div>Loading...</div>;
+  }
+
+  if (errorMessageFetchingPatients !== '') {
+    return <div>{errorMessageFetchingPatients}</div>;
+  }
 
   const openModal = (): void => setModalOpen(true);
 
@@ -26,27 +29,16 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
     setModalOpen(false);
   };
 
-  const submitNewPatient = async (values: PatientFormValues) => {
-    try {
-      const patient = await patientService.create(values);
-      setPatients(patients.concat(patient));
-      setModalOpen(false);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        if (error?.response?.data && typeof error?.response?.data === 'string') {
-          const message = error.response.data;
-          console.error(message);
-          showNotification(message, NotificationStatus.Error, NotificationLocation.Form);
-        } else {
-          console.error('Unrecognized axios error', error);
-          showNotification('An error occurred while adding the patient.', NotificationStatus.Error, NotificationLocation.Form);
-        }
-      } else {
-        console.error('Unknown error', error);
-        showNotification('An error occurred while adding the patient.', NotificationStatus.Error, NotificationLocation.Form);
-      }
+  const handleSubmit = async (values: PatientFormValues) => {
+    const { success, errorMessage } = await createNewPatient(values);
+
+    if (success) {
+      closeModal();
+    } else {
+      const errorMessageStr = errorMessage as string;
+      showNotification(errorMessageStr, NotificationStatus.Error, NotificationLocation.Form);
     }
-  };
+  }
 
   return (
     <div className="App">
@@ -55,7 +47,7 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
           Patient list
         </Typography>
       </Box>
-      <Table style={{ marginBottom: '1em' }}>
+      <Table style={customMarginBottom}>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -75,7 +67,7 @@ const PatientListPage = ({ patients, setPatients } : Props ) => {
       </Table>
       <AddPatientModal
         modalOpen={modalOpen}
-        onSubmit={submitNewPatient}
+        onSubmit={handleSubmit}
         onClose={closeModal}
       />
       <Button variant="contained" onClick={() => openModal()}>

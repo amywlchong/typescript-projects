@@ -22,15 +22,6 @@ type Action =
 
 const initialState: NotificationState = { message: null, status: null, location: null };
 
-type NotificationContextValues = [
-  NotificationState | undefined,
-  ((message: string, status: NotificationStatus, location: NotificationLocation) => void) | (() => void)
-]
-
-export const NotificationContext = createContext<NotificationContextValues>([undefined, () => {
-  // This is a placeholder function that gets replaced by the actual function in the context provider.
-}]);
-
 const notificationReducer = (state: NotificationState, action: Action): NotificationState => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
@@ -45,6 +36,15 @@ const notificationReducer = (state: NotificationState, action: Action): Notifica
       return state;
   }
 };
+
+type NotificationContextValues = [
+  NotificationState,
+  ((message: string, status: NotificationStatus, location: NotificationLocation) => void) | (() => void)
+]
+
+export const NotificationContext = createContext<NotificationContextValues>([initialState, () => {
+  // This is a placeholder function that gets replaced by the actual function in the context provider.
+}]);
 
 interface NotificationContextProviderProps {
   children: ReactNode;

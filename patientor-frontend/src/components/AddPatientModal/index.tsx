@@ -11,7 +11,7 @@ import Notification from '../Notification';
 interface Props {
   modalOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: PatientFormValues) => void;
+  onSubmit: (values: PatientFormValues) => Promise<void>;
 }
 
 const AddPatientModal = ({ modalOpen, onClose, onSubmit}: Props) => {

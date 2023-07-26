@@ -1,8 +1,6 @@
-import { Rating } from '@mui/material';
 import { Favorite } from '@mui/icons-material';
-
-import { styled } from '@mui/material/styles';
 import { Typography, Box } from '@mui/material';
+import { StyledRating } from '../styles/styles';
 
 type BarProps = {
   rating: number | null;
@@ -10,15 +8,6 @@ type BarProps = {
   readOnly: boolean;
   setRating?: React.Dispatch<React.SetStateAction<number | null>>;
 };
-
-const StyledRating = styled(Rating)({
-  iconFilled: {
-    color: '#ff6d75',
-  },
-  iconHover: {
-    color: '#ff3d47',
-  }
-});
 
 const HEALTHBAR_TEXTS = [
   'The patient is in great shape',
@@ -28,12 +17,15 @@ const HEALTHBAR_TEXTS = [
 ];
 
 const HealthRatingBar = ({ rating, showText, readOnly, setRating }: BarProps) => {
+
+  const healthBarBoxStyles = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'start'
+  };
+
   return (
-    <Box className="health-bar" sx={{
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'start'
-    }}>
+    <Box className="health-bar" sx={healthBarBoxStyles}>
       <Typography variant="body1">Health check rating: </Typography>
         <StyledRating
           readOnly={readOnly}

@@ -1,4 +1,5 @@
 import {  TextField } from '@mui/material';
+import { customMarginTop } from '../../styles/styles'
 
 interface Props {
   date: string;
@@ -12,7 +13,7 @@ const HospitalEntryFields = ({ date, setDate, criteria, setCriteria}: Props) => 
   return (
     <>
       <TextField
-        sx={{ marginTop: '20px' }}
+        sx={customMarginTop}
         label="Discharge date"
         type="date"
         value={date}

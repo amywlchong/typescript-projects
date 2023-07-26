@@ -1,33 +1,22 @@
 import { Entry, EntryType, Diagnosis } from '../../types'
+import { formatDate, getDiagnosisName } from '../../utils/dataProcessing';
+import { assertNever } from '../../utils/typeUtils';
 
 import HealthRatingBar from '../HealthRatingBar';
 
-import { Typography, Paper, List, ListItem } from '@mui/material';
-import { styled } from '@mui/system';
+import { Typography } from '@mui/material';
+import { StyledPaper, StyledList, StyledListItem } from '../../styles/styles'
 
 interface Props {
   entry: Entry;
-  getDiagnosisName: (code: Diagnosis['code']) => Diagnosis['name'];
-  formatDate: (date: string | undefined) => (string | undefined);
+  diagnosisDescriptions: Diagnosis[];
 }
 
-const EntryComponent = ({ entry, getDiagnosisName, formatDate }: Props) => {
+const EntryComponent = ({ entry, diagnosisDescriptions }: Props) => {
 
-  const StyledPaper = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(2),
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginBottom: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between'
-  }));
-
-  const assertNever = (value: never): never => {
-    throw new Error(
-      `Unhandled discriminated union member: ${JSON.stringify(value)}`
-    );
-  };
+  const descriptionStyles = { fontStyle: 'italic' };
+  const noDetailsStyles = { paddingLeft: '10px' };
+  const specialistStyles = { alignSelf: 'flex-end' };
 
   const entryDetails = (entry: Entry) => {
     switch(entry.type) {
@@ -46,30 +35,25 @@ const EntryComponent = ({ entry, getDiagnosisName, formatDate }: Props) => {
     <StyledPaper>
       <div>
         <Typography variant="body1">Date: {formatDate(entry.date)}</Typography>
-        <Typography variant="body1" sx={{ fontStyle: 'italic' }}>Description: {entry.description}</Typography>
+        <Typography variant="body1" sx={descriptionStyles}>Description: {entry.description}</Typography>
         <Typography variant="body1">
             Diagnosis details:
         </Typography>
         {entry.diagnosisCodes && entry.diagnosisCodes.length > 0
-          ? <List sx={{ padding: '0 1em', listStyleType: 'disc' }}>
-              {entry.diagnosisCodes.map((code, index) => (
-                <ListItem
-                  key={index}
-                  sx={{
-                    typography: 'body1',
-                    display: 'list-item',
-                    paddingLeft: '10px'
-                  }}
+          ? <StyledList>
+              {entry.diagnosisCodes.map((code) => (
+                <StyledListItem
+                  key={code}
                 >
-                  {code}: {getDiagnosisName(code)}
-                </ListItem>
+                  {code}: {getDiagnosisName(code, diagnosisDescriptions)}
+                </StyledListItem>
               ))}
-            </List>
-          : <Typography variant="body2" sx={{paddingLeft: '10px'}}>No details</Typography>
+            </StyledList>
+          : <Typography variant="body2" sx={noDetailsStyles}>No details</Typography>
         }
         {entryDetails(entry)}
       </div>
-      <div style={{ alignSelf: 'flex-end' }}>
+      <div style={specialistStyles}>
         <Typography variant="body1">Diagnosed by {entry.specialist}</Typography>
       </div>
     </StyledPaper>

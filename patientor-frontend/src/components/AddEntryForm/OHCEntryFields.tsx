@@ -1,4 +1,5 @@
 import {  TextField } from '@mui/material';
+import { customMarginTop } from '../../styles/styles'
 
 interface Props {
   employerName: string;
@@ -19,7 +20,7 @@ const OHCEntryFields = ({ employerName, setEmployerName, sickLeaveStart, setSick
         onChange={({ target }) => setEmployerName(target.value)}
       />
       <TextField
-        sx={{ marginTop: '20px' }}
+        sx={customMarginTop}
         label="Sick leave start date"
         type="date"
         value={sickLeaveStart}
@@ -27,7 +28,7 @@ const OHCEntryFields = ({ employerName, setEmployerName, sickLeaveStart, setSick
         InputLabelProps={{ shrink: true }}
       />
       <TextField
-        sx={{ marginTop: '20px' }}
+        sx={customMarginTop}
         label="Sick leave end date"
         type="date"
         value={sickLeaveEnd}
