@@ -1,6 +1,11 @@
 import { Diagnosis, HealthCheckRating, Discharge, SickLeave, EntryType, BaseEntryWithoutId, EntryWithoutId } from '../types';
-import diagnosisData from '../../data/diagnoses';
 import UserInputError from '../errors/UserInputError';
+
+let validDiagnosisCodes: Diagnosis['code'][] = [];
+
+export const setValidDiagnosisCodes = (codes: Diagnosis['code'][]) => {
+  validDiagnosisCodes = codes;
+};
 
 const isNonEmptyString = (text: unknown): text is string => {
   if (typeof text !== 'string') {
@@ -15,7 +20,6 @@ const isDate = (date: string): boolean => {
 };
 
 const isDiagnosisCode = (code: string): code is Diagnosis['code'] => {
-  const validDiagnosisCodes = diagnosisData.map(d => d.code);
   return validDiagnosisCodes.includes(code);
 };
 

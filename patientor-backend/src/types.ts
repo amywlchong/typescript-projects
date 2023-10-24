@@ -1,10 +1,16 @@
+import mongoose from 'mongoose';
+
 export interface Diagnosis {
+  id: string;
   code: string;
   name: string;
   latin?: string;
 }
 
-interface BaseEntry {
+// type for diagnosis that is not saved yet
+export type NewDiagnosis = Omit<Diagnosis, 'id'>;
+
+export interface BaseEntry {
   id: string;
   description: string;
   date: Date;
@@ -36,7 +42,7 @@ export enum EntryType {
   HealthCheck = 'HealthCheck'
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
   type: EntryType.Hospital;
   discharge: Discharge;
 }
@@ -73,13 +79,13 @@ export enum Gender {
 
 // type for stored data
 export interface Patient {
-  id: number;
+  id: string;
   name: string;
   dateOfBirth?: Date;
   idCardNumber?: string;
   gender: Gender;
   occupation: string;
-  entries: Entry[];
+  entries: mongoose.Types.ObjectId[];
 }
 
 // type for client-facing data
