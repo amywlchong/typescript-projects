@@ -15,6 +15,7 @@ const OHCEntryFields = ({ employerName, setEmployerName, sickLeaveStart, setSick
   return (
     <>
       <TextField
+        sx={customMarginTop}
         label="Employer name"
         value={employerName}
         onChange={({ target }) => setEmployerName(target.value)}

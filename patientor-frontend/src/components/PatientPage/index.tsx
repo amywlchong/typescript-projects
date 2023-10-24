@@ -21,7 +21,7 @@ const PatientPage = ({ diagnosisDescriptions }: Props) => {
   const [isEntryFormVisible, setIsEntryFormVisible] = useState(false);
 
   const params = useParams();
-  const id = Number(params.id);
+  const id = params.id || '';
   const { patient, loadingPatient, errorMessageFetchingPatient, createNewEntry } = useOnePatientState(id);
 
   if (loadingPatient) {

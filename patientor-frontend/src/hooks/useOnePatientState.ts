@@ -4,7 +4,7 @@ import useFetchAndUpdateData from './useFetchAndUpdateData';
 import { EntryWithoutId } from '../types';
 import { handleError } from '../utils/errorHandlers';
 
-const useOnePatientState = (id: number) => {
+const useOnePatientState = (id: string) => {
 
   const { data, loadingData, errorMessage, updateItem } = useFetchAndUpdateData<Patient>(
     () => patientService.getOne(id),

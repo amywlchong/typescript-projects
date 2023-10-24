@@ -1,36 +1,31 @@
-import { InputLabel, Select, Box, Chip, FormControl } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { Chip, FormControl, TextField } from '@mui/material';
 import { customMarginTop } from '../../styles/styles';
-import { ReactElement } from 'react';
 
 interface Props<T extends { toString(): string }> {
   label: string;
+  options: T[];
   selectedOptions: T[];
   setSelectedOptions: React.Dispatch<React.SetStateAction<T[]>>;
-  menuItems: Array<ReactElement>;
+  getOptionLabel?: (option: T) => string
 }
 
-const MultiSelect = <T extends { toString(): string }>({ label, selectedOptions, setSelectedOptions, menuItems }: Props<T>) => {
-
+const MultiSelect = <T extends { toString(): string }>({ label, options, selectedOptions, setSelectedOptions, getOptionLabel }: Props<T>) => {
   return (
     <FormControl fullWidth sx={customMarginTop}>
-      <InputLabel>{label}</InputLabel>
-      <Select
+      <Autocomplete
         multiple
         value={selectedOptions}
-        onChange={({ target }) => {
-          const newSelected = target.value as T[];
-          setSelectedOptions(newSelected);
-        }}
-        renderValue={(selected) => (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {selected.map((value) => (
-              <Chip key={value.toString()} label={value.toString()} />
-            ))}
-          </Box>
-        )}
-      >
-        {menuItems}
-      </Select>
+        onChange={(_, newValue) => setSelectedOptions(newValue)}
+        options={options}
+        getOptionLabel={getOptionLabel}
+        renderInput={(params) => <TextField {...params} variant="outlined" label={label} />}
+        renderTags={(value: T[]) =>
+          value.map((option) => (
+            <Chip key={option.toString()} label={option.toString()} />
+          ))
+        }
+      />
     </FormControl>
   )
 }

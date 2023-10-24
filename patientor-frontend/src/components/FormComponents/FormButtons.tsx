@@ -1,4 +1,5 @@
 import { Grid, Button } from '@mui/material';
+import { customMarginTop } from '../../styles/styles'
 
 interface Props {
   onCancel: () => void;
@@ -9,19 +10,21 @@ const FormButtons = ({ onCancel }: Props) => {
     <Grid container justifyContent="space-between">
     <Grid item>
       <Button
-          variant="outlined"
-          type="button"
-          onClick={onCancel}
+        sx={customMarginTop}
+        variant="outlined"
+        type="button"
+        onClick={onCancel}
       >
-          Cancel
+        Cancel
       </Button>
     </Grid>
     <Grid item>
       <Button
-          type="submit"
-          variant="contained"
+        sx={customMarginTop}
+        type="submit"
+        variant="contained"
       >
-          Add
+        Add
       </Button>
     </Grid>
     </Grid>

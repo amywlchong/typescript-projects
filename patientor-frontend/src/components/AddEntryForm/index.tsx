@@ -1,6 +1,6 @@
 import { useState, useContext, FormEvent } from 'react';
 
-import { TextField, MenuItem, SelectChangeEvent } from '@mui/material';
+import { TextField, SelectChangeEvent } from '@mui/material';
 import { customMarginTop } from '../../styles/styles';
 import FormButtons from '../FormComponents/FormButtons'
 import SingleSelect from '../FormComponents/SingleSelect'
@@ -112,21 +112,23 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
           InputLabelProps={{ shrink: true }}
         />
         <TextField
+          sx={customMarginTop}
           label="Description"
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
         <MultiSelect
           label={'Diagnosis Codes'}
+          options={diagnosisDescriptions.map(diagnosis => diagnosis.code)}
           selectedOptions={diagnosisCodes}
           setSelectedOptions={setDiagnosisCodes}
-          menuItems={diagnosisDescriptions.map((diagnosis) => (
-            <MenuItem key={diagnosis.code} value={diagnosis.code}>
-              {diagnosis.code} {diagnosis.name}
-            </MenuItem>
-          ))}
+          getOptionLabel={diagnosisCode => {
+            const diagnosisName = diagnosisDescriptions.find(diagnosis => diagnosis.code === diagnosisCode)?.name;
+            return `${diagnosisCode} - ${diagnosisName}`;
+          }}
         />
         <TextField
+          sx={customMarginTop}
           label="Specialist"
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}

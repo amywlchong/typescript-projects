@@ -1,4 +1,5 @@
 export interface Diagnosis {
+  id: string;
   code: string;
   name: string;
   latin?: string;
@@ -70,7 +71,7 @@ export enum Gender {
 }
 
 export interface Patient {
-  id: number;
+  id: string;
   name: string;
   occupation: string;
   gender: Gender;

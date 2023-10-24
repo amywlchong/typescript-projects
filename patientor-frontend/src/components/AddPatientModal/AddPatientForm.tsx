@@ -60,6 +60,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
           onChange={({ target }) => setName(target.value)}
         />
         <TextField
+          sx={customMarginTop}
           label="ID card number"
           value={idCardNumber}
           onChange={({ target }) => setIDCardNumber(target.value)}
@@ -73,6 +74,7 @@ const AddPatientForm = ({ onCancel, onSubmit }: Props) => {
           InputLabelProps={{ shrink: true }}
         />
         <TextField
+          sx={customMarginTop}
           label="Occupation"
           value={occupation}
           onChange={({ target }) => setOccupation(target.value)}

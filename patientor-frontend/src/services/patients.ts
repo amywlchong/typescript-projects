@@ -11,7 +11,7 @@ const getAll = async () => {
   return data;
 };
 
-const getOne = async (id: number) => {
+const getOne = async (id: string) => {
   const { data } = await axios.get<Patient | undefined>(
     `${apiBaseUrl}/patients/${id}`
   );
@@ -28,7 +28,7 @@ const create = async (object: PatientFormValues) => {
   return data;
 };
 
-const createEntry = async (id: number, object: EntryWithoutId) => {
+const createEntry = async (id: string, object: EntryWithoutId) => {
   const { data } = await axios.post<Entry>(
     `${apiBaseUrl}/patients/${id}/entries`,
     object

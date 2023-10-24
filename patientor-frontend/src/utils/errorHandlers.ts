@@ -8,8 +8,8 @@ export const handleError = (error: unknown, defaultMessage = 'An error occurred'
       return notFoundMessage;
     }
 
-    else if (error.response?.data && typeof error.response.data === 'string') {
-      const message = error.response.data;
+    else if (error.response?.data?.error && typeof error.response.data.error === 'string') {
+      const message = error.response.data.error;
       console.error(message);
       return message;
     }

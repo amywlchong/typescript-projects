@@ -21,6 +21,7 @@ const HospitalEntryFields = ({ date, setDate, criteria, setCriteria}: Props) => 
         InputLabelProps={{ shrink: true }}
       />
       <TextField
+        sx={customMarginTop}
         label="Discharge criteria"
         value={criteria}
         onChange={({ target }) => setCriteria(target.value)}
