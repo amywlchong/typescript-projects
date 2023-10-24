@@ -6,6 +6,10 @@ This repository houses my projects and solutions to the exercises for the TypeSc
 
 ### Patientor is a medical record application for doctors to manage their patients' health and diagnosis data.
 
+### Deployed Patientor App
+
+https://amy-patientor.fly.dev/
+
 ### [patientor-backend](https://github.com/amywlchong/typescript-projects/tree/master/patientor-backend)
 
 Topics: Typing an Express app, interfaces, utility types, enums, validating requests (type checking, type guards, and type assertions), TypeScript best practices, etc.
