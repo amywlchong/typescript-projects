@@ -11,7 +11,7 @@ interface BaseEntry {
   date: string;
   specialist: string;
 
-  diagnosisCodes?: Array<Diagnosis['code']>;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
 interface SickLeave {
@@ -25,16 +25,16 @@ interface Discharge {
 }
 
 export enum HealthCheckRating {
-  'Healthy' = 0,
-  'LowRisk' = 1,
-  'HighRisk' = 2,
-  'CriticalRisk' = 3
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3,
 }
 
 export enum EntryType {
-  Hospital = 'Hospital',
-  OccupationalHealthcare = 'OccupationalHealthcare',
-  HealthCheck = 'HealthCheck'
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare",
+  HealthCheck = "HealthCheck",
 }
 
 interface HospitalEntry extends BaseEntry {
@@ -59,15 +59,17 @@ export type Entry =
   | HealthCheckEntry;
 
 // Define special omit for unions
-type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
 
 // Define Entry without the 'id' property
-export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type EntryWithoutId = UnionOmit<Entry, "id">;
 
 export enum Gender {
-  Male = 'male',
-  Female = 'female',
-  Other = 'other'
+  Male = "male",
+  Female = "female",
+  Other = "other",
 }
 
 export interface Patient {
@@ -80,4 +82,4 @@ export interface Patient {
   entries: Entry[];
 }
 
-export type PatientFormValues = Omit<Patient, 'id' | 'entries'>;
+export type PatientFormValues = Omit<Patient, "id" | "entries">;

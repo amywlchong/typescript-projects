@@ -1,5 +1,5 @@
-import {  TextField } from '@mui/material';
-import { customMarginTop } from '../../styles/styles'
+import { TextField } from "@mui/material";
+import { customMarginTop } from "../../styles/styles";
 
 interface Props {
   date: string;
@@ -8,8 +8,12 @@ interface Props {
   setCriteria: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const HospitalEntryFields = ({ date, setDate, criteria, setCriteria}: Props) => {
-
+const HospitalEntryFields = ({
+  date,
+  setDate,
+  criteria,
+  setCriteria,
+}: Props) => {
   return (
     <>
       <TextField
@@ -27,7 +31,7 @@ const HospitalEntryFields = ({ date, setDate, criteria, setCriteria}: Props) => 
         onChange={({ target }) => setCriteria(target.value)}
       />
     </>
-  )
-}
+  );
+};
 
-export default HospitalEntryFields
+export default HospitalEntryFields;

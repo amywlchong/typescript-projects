@@ -1,5 +1,5 @@
-import mongoose, { Schema, ObjectId } from 'mongoose';
-import { Gender, Patient } from '../types';
+import mongoose, { Schema, ObjectId } from "mongoose";
+import { Gender, Patient } from "../types";
 
 const PatientSchema = new Schema<Patient>(
   {
@@ -9,13 +9,15 @@ const PatientSchema = new Schema<Patient>(
     gender: {
       type: String,
       enum: Object.values(Gender),
-      required: true
+      required: true,
     },
     occupation: { type: String, required: true },
-    entries: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Entry'
-    }]
+    entries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Entry",
+      },
+    ],
   },
   {
     toJSON: {
@@ -24,9 +26,9 @@ const PatientSchema = new Schema<Patient>(
         returnedObject.id = returnedObjId.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
-      }
-    }
+      },
+    },
   }
 );
 
-export const PatientModel = mongoose.model<Patient>('Patient', PatientSchema);
+export const PatientModel = mongoose.model<Patient>("Patient", PatientSchema);

@@ -1,5 +1,5 @@
-import {  TextField } from '@mui/material';
-import { customMarginTop } from '../../styles/styles'
+import { TextField } from "@mui/material";
+import { customMarginTop } from "../../styles/styles";
 
 interface Props {
   employerName: string;
@@ -10,8 +10,14 @@ interface Props {
   setSickLeaveEnd: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const OHCEntryFields = ({ employerName, setEmployerName, sickLeaveStart, setSickLeaveStart, sickLeaveEnd, setSickLeaveEnd}: Props) => {
-
+const OHCEntryFields = ({
+  employerName,
+  setEmployerName,
+  sickLeaveStart,
+  setSickLeaveStart,
+  sickLeaveEnd,
+  setSickLeaveEnd,
+}: Props) => {
   return (
     <>
       <TextField
@@ -37,7 +43,7 @@ const OHCEntryFields = ({ employerName, setEmployerName, sickLeaveStart, setSick
         InputLabelProps={{ shrink: true }}
       />
     </>
-  )
-}
+  );
+};
 
-export default OHCEntryFields
+export default OHCEntryFields;

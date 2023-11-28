@@ -1,5 +1,5 @@
-import mongoose, { Schema, ObjectId } from 'mongoose';
-import { Diagnosis } from '../types';
+import mongoose, { Schema, ObjectId } from "mongoose";
+import { Diagnosis } from "../types";
 
 const diagnosisSchema = new Schema<Diagnosis>(
   {
@@ -14,9 +14,12 @@ const diagnosisSchema = new Schema<Diagnosis>(
         returnedObject.id = returnedObjId.toString();
         delete returnedObject._id;
         delete returnedObject.__v;
-      }
-    }
+      },
+    },
   }
 );
 
-export const DiagnosisModel = mongoose.model<Diagnosis>('Diagnosis', diagnosisSchema);
+export const DiagnosisModel = mongoose.model<Diagnosis>(
+  "Diagnosis",
+  diagnosisSchema
+);

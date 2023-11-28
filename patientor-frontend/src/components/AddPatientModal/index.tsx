@@ -1,12 +1,15 @@
-import { useContext } from 'react';
+import { useContext } from "react";
 
-import { Dialog, DialogTitle, DialogContent, Divider } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Divider } from "@mui/material";
 
-import AddPatientForm from './AddPatientForm';
-import { PatientFormValues } from '../../types';
+import AddPatientForm from "./AddPatientForm";
+import { PatientFormValues } from "../../types";
 
-import { NotificationContext, NotificationLocation } from '../../contexts/NotificationContext';
-import Notification from '../Notification';
+import {
+  NotificationContext,
+  NotificationLocation,
+} from "../../contexts/NotificationContext";
+import Notification from "../Notification";
 
 interface Props {
   modalOpen: boolean;
@@ -14,8 +17,7 @@ interface Props {
   onSubmit: (values: PatientFormValues) => Promise<void>;
 }
 
-const AddPatientModal = ({ modalOpen, onClose, onSubmit}: Props) => {
-
+const AddPatientModal = ({ modalOpen, onClose, onSubmit }: Props) => {
   const [notification] = useContext(NotificationContext);
 
   return (
@@ -23,11 +25,13 @@ const AddPatientModal = ({ modalOpen, onClose, onSubmit}: Props) => {
       <DialogTitle>Add a new patient</DialogTitle>
       <Divider />
       <DialogContent>
-        {notification?.location === NotificationLocation.Form && <Notification />}
-        <AddPatientForm onSubmit={onSubmit} onCancel={onClose}/>
+        {notification?.location === NotificationLocation.Form && (
+          <Notification />
+        )}
+        <AddPatientForm onSubmit={onSubmit} onCancel={onClose} />
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 export default AddPatientModal;

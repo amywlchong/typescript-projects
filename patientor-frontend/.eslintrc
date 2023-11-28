@@ -20,6 +20,16 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "react/react-in-jsx-scope": 0,
-    "quotes": ["error", "single"]
+    // Disable style rules to let prettier own it
+    "object-curly-spacing": "off",
+    "comma-dangle": "off",
+    "max-len": "off",
+    "indent": "off",
+    "no-mixed-operators": "off",
+    "no-console": "off",
+    "arrow-parens": "off",
+    "generator-star-spacing": "off",
+    "space-before-function-paren": "off",
+    "jsx-quotes": "off"
   }
 }

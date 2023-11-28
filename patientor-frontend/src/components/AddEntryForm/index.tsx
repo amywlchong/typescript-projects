@@ -1,19 +1,28 @@
-import { useState, useContext, FormEvent } from 'react';
+import { useState, useContext, FormEvent } from "react";
 
-import { TextField, SelectChangeEvent } from '@mui/material';
-import { customMarginTop } from '../../styles/styles';
-import FormButtons from '../FormComponents/FormButtons'
-import SingleSelect from '../FormComponents/SingleSelect'
-import MultiSelect from '../FormComponents/MultiSelect'
+import { TextField, SelectChangeEvent } from "@mui/material";
+import { customMarginTop } from "../../styles/styles";
+import FormButtons from "../FormComponents/FormButtons";
+import SingleSelect from "../FormComponents/SingleSelect";
+import MultiSelect from "../FormComponents/MultiSelect";
 
-import { Diagnosis, EntryType, EntryWithoutId, HealthCheckRating } from '../../types';
+import {
+  Diagnosis,
+  EntryType,
+  EntryWithoutId,
+  HealthCheckRating,
+} from "../../types";
 
-import HospitalEntryFields from './HospitalEntryFields'
-import OHCEntryFields from './OHCEntryFields';
-import HealthCheckEntryFields from './HealthCheckEntryFields';
+import HospitalEntryFields from "./HospitalEntryFields";
+import OHCEntryFields from "./OHCEntryFields";
+import HealthCheckEntryFields from "./HealthCheckEntryFields";
 
-import { NotificationContext, NotificationStatus, NotificationLocation } from '../../contexts/NotificationContext';
-import Notification from '../Notification'
+import {
+  NotificationContext,
+  NotificationStatus,
+  NotificationLocation,
+} from "../../contexts/NotificationContext";
+import Notification from "../Notification";
 
 interface Props {
   onCancel: () => void;
@@ -26,32 +35,34 @@ interface TypeOption {
   label: string;
 }
 
-const typeOptions: TypeOption[] = Object.values(EntryType).map(v => ({
-  value: v, label: v.toString()
+const typeOptions: TypeOption[] = Object.values(EntryType).map((v) => ({
+  value: v,
+  label: v.toString(),
 }));
 
 const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
-
   const [notification, showNotification] = useContext(NotificationContext);
 
-  const [date, setDate] = useState('');
-  const [description, setDescription] = useState('');
+  const [date, setDate] = useState("");
+  const [description, setDescription] = useState("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  const [specialist, setSpecialist] = useState('');
+  const [specialist, setSpecialist] = useState("");
   const [entryType, setEntryType] = useState<EntryType | null>(null);
 
-  const [dischargeDate, setDischargeDate] = useState('');
-  const [dischargeCriteria, setDischargeCriteria] = useState('');
+  const [dischargeDate, setDischargeDate] = useState("");
+  const [dischargeCriteria, setDischargeCriteria] = useState("");
 
-  const [employerName, setEmployerName] = useState('');
-  const [sickLeaveStart, setSickLeaveStart] = useState('');
-  const [sickLeaveEnd, setSickLeaveEnd] = useState('');
+  const [employerName, setEmployerName] = useState("");
+  const [sickLeaveStart, setSickLeaveStart] = useState("");
+  const [sickLeaveEnd, setSickLeaveEnd] = useState("");
 
-  const [healthCheckRating, setHealthCheckRating] = useState<number | null>(null);
+  const [healthCheckRating, setHealthCheckRating] = useState<number | null>(
+    null
+  );
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
     const value = event.target.value;
-    const type = Object.values(EntryType).find(t => t.toString() === value);
+    const type = Object.values(EntryType).find((t) => t.toString() === value);
     if (type) {
       setEntryType(type);
     }
@@ -64,38 +75,50 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
       date,
       description,
       diagnosisCodes,
-      specialist
-    }
+      specialist,
+    };
 
-    switch(entryType) {
+    switch (entryType) {
       case EntryType.Hospital:
         onSubmit({
           ...baseEntry,
           type: entryType,
-          discharge: {date: dischargeDate, criteria: dischargeCriteria}
-        })
+          discharge: { date: dischargeDate, criteria: dischargeCriteria },
+        });
         break;
-        case EntryType.OccupationalHealthcare:
+      case EntryType.OccupationalHealthcare:
+        onSubmit({
+          ...baseEntry,
+          type: entryType,
+          employerName,
+          sickLeave: { startDate: sickLeaveStart, endDate: sickLeaveEnd },
+        });
+        break;
+      case EntryType.HealthCheck:
+        if (
+          Object.values(HealthCheckRating).some(
+            (rating) => rating === healthCheckRating
+          )
+        ) {
           onSubmit({
             ...baseEntry,
             type: entryType,
-            employerName,
-            sickLeave: {startDate: sickLeaveStart, endDate: sickLeaveEnd}
-          })
-          break;
-        case EntryType.HealthCheck:
-          if (Object.values(HealthCheckRating).some(rating => rating === healthCheckRating)) {
-            onSubmit({
-              ...baseEntry,
-              type: entryType,
-              healthCheckRating: healthCheckRating as HealthCheckRating
-            })
-          } else {
-            showNotification('Invalid health check rating value', NotificationStatus.Error, NotificationLocation.Form);
-          }
-          break;
+            healthCheckRating: healthCheckRating as HealthCheckRating,
+          });
+        } else {
+          showNotification(
+            "Invalid health check rating value",
+            NotificationStatus.Error,
+            NotificationLocation.Form
+          );
+        }
+        break;
       default:
-        showNotification('Missing or incorrect entry type', NotificationStatus.Error, NotificationLocation.Form);
+        showNotification(
+          "Missing or incorrect entry type",
+          NotificationStatus.Error,
+          NotificationLocation.Form
+        );
     }
   };
 
@@ -118,12 +141,14 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
           onChange={({ target }) => setDescription(target.value)}
         />
         <MultiSelect
-          label={'Diagnosis Codes'}
-          options={diagnosisDescriptions.map(diagnosis => diagnosis.code)}
+          label={"Diagnosis Codes"}
+          options={diagnosisDescriptions.map((diagnosis) => diagnosis.code)}
           selectedOptions={diagnosisCodes}
           setSelectedOptions={setDiagnosisCodes}
-          getOptionLabel={diagnosisCode => {
-            const diagnosisName = diagnosisDescriptions.find(diagnosis => diagnosis.code === diagnosisCode)?.name;
+          getOptionLabel={(diagnosisCode) => {
+            const diagnosisName = diagnosisDescriptions.find(
+              (diagnosis) => diagnosis.code === diagnosisCode
+            )?.name;
             return `${diagnosisCode} - ${diagnosisName}`;
           }}
         />
@@ -135,38 +160,39 @@ const AddEntryForm = ({ onCancel, onSubmit, diagnosisDescriptions }: Props) => {
         />
         <SingleSelect
           options={typeOptions}
-          label={'Entry Type'}
+          label={"Entry Type"}
           selectedOption={entryType}
           onOptionChange={onTypeChange}
         />
 
-        {entryType === EntryType.Hospital &&
+        {entryType === EntryType.Hospital && (
           <HospitalEntryFields
             date={dischargeDate}
             setDate={setDischargeDate}
             criteria={dischargeCriteria}
             setCriteria={setDischargeCriteria}
           />
-        }
+        )}
 
-        {entryType === EntryType.OccupationalHealthcare &&
+        {entryType === EntryType.OccupationalHealthcare && (
           <OHCEntryFields
             employerName={employerName}
             setEmployerName={setEmployerName}
             sickLeaveStart={sickLeaveStart}
             setSickLeaveStart={setSickLeaveStart}
             sickLeaveEnd={sickLeaveEnd}
-            setSickLeaveEnd={setSickLeaveEnd} />
-        }
+            setSickLeaveEnd={setSickLeaveEnd}
+          />
+        )}
 
-        {entryType === EntryType.HealthCheck &&
+        {entryType === EntryType.HealthCheck && (
           <HealthCheckEntryFields
             healthCheckRating={healthCheckRating}
-            setHealthCheckRating={setHealthCheckRating} />
-        }
+            setHealthCheckRating={setHealthCheckRating}
+          />
+        )}
 
         <FormButtons onCancel={onCancel} />
-
       </form>
     </div>
   );

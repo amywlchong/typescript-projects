@@ -1,5 +1,5 @@
-import express from 'express';
-import UserInputError from '../errors/UserInputError';
+import express from "express";
+import UserInputError from "../errors/UserInputError";
 
 export const errorHandler = (
   error: Error,
@@ -11,8 +11,7 @@ export const errorHandler = (
 
   if (error instanceof UserInputError) {
     return response.status(400).json({ error: error.message });
-  }
-  else {
+  } else {
     return response.status(500).end();
   }
 };

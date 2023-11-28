@@ -1,17 +1,34 @@
-import { useState, useContext } from 'react';
-import { Link } from 'react-router-dom'
+import { useState, useContext } from "react";
+import { Link } from "react-router-dom";
 
-import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
-import { customMarginBottom } from '../../styles/styles';
+import {
+  Box,
+  Table,
+  Button,
+  TableHead,
+  Typography,
+  TableCell,
+  TableRow,
+  TableBody,
+} from "@mui/material";
+import { customMarginBottom } from "../../styles/styles";
 
-import usePatientsState from '../../hooks/usePatientsState';
-import { PatientFormValues, Patient } from '../../types';
-import { NotificationContext, NotificationStatus, NotificationLocation } from '../../contexts/NotificationContext';
-import AddPatientModal from '../AddPatientModal';
+import usePatientsState from "../../hooks/usePatientsState";
+import { PatientFormValues, Patient } from "../../types";
+import {
+  NotificationContext,
+  NotificationStatus,
+  NotificationLocation,
+} from "../../contexts/NotificationContext";
+import AddPatientModal from "../AddPatientModal";
 
 const PatientListPage = () => {
-
-  const { patients, loadingPatients, errorMessageFetchingPatients, createNewPatient } = usePatientsState();
+  const {
+    patients,
+    loadingPatients,
+    errorMessageFetchingPatients,
+    createNewPatient,
+  } = usePatientsState();
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [, showNotification] = useContext(NotificationContext);
 
@@ -19,7 +36,7 @@ const PatientListPage = () => {
     return <div>Loading...</div>;
   }
 
-  if (errorMessageFetchingPatients !== '') {
+  if (errorMessageFetchingPatients !== "") {
     return <div>{errorMessageFetchingPatients}</div>;
   }
 
@@ -36,9 +53,13 @@ const PatientListPage = () => {
       closeModal();
     } else {
       const errorMessageStr = errorMessage as string;
-      showNotification(errorMessageStr, NotificationStatus.Error, NotificationLocation.Form);
+      showNotification(
+        errorMessageStr,
+        NotificationStatus.Error,
+        NotificationLocation.Form
+      );
     }
-  }
+  };
 
   return (
     <div className="App">
@@ -58,7 +79,9 @@ const PatientListPage = () => {
         <TableBody>
           {Object.values(patients).map((patient: Patient) => (
             <TableRow key={patient.id}>
-              <TableCell><Link to={`/patients/${patient.id}`}>{patient.name}</Link></TableCell>
+              <TableCell>
+                <Link to={`/patients/${patient.id}`}>{patient.name}</Link>
+              </TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
             </TableRow>

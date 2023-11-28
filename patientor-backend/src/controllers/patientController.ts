@@ -1,22 +1,34 @@
-import { Request, Response, NextFunction } from 'express';
-import { PatientModel } from '../models/patient.model';
-import toNewPatient from '../utils/toNewPatient';
-import { Patient, NonSensitivePatient, EntryType } from '../types';
-import toNewEntry, { setValidDiagnosisCodes } from '../utils/toNewEntry';
-import { HealthCheckEntry, HospitalEntry, OccupationalHealthcareEntry } from '../models/entry.model';
-import { DiagnosisModel } from '../models/diagnosis.model';
+import { Request, Response, NextFunction } from "express";
+import { PatientModel } from "../models/patient.model";
+import toNewPatient from "../utils/toNewPatient";
+import { Patient, NonSensitivePatient, EntryType } from "../types";
+import toNewEntry, { setValidDiagnosisCodes } from "../utils/toNewEntry";
+import {
+  HealthCheckEntry,
+  HospitalEntry,
+  OccupationalHealthcareEntry,
+} from "../models/entry.model";
+import { DiagnosisModel } from "../models/diagnosis.model";
 
-const getNonSensitivePatients = (sensitivePatients: Array<Patient>): Array<NonSensitivePatient> => {
-  return sensitivePatients.map(({ id, name, dateOfBirth, gender, occupation}) => ({
-    id,
-    name,
-    dateOfBirth,
-    gender,
-    occupation
-  }));
+const getNonSensitivePatients = (
+  sensitivePatients: Array<Patient>
+): Array<NonSensitivePatient> => {
+  return sensitivePatients.map(
+    ({ id, name, dateOfBirth, gender, occupation }) => ({
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+    })
+  );
 };
 
-const getAllNonSensitivePatients = async (_req: Request, res: Response, next: NextFunction) => {
+const getAllNonSensitivePatients = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const patients = await PatientModel.find({});
     res.json(getNonSensitivePatients(patients));
@@ -25,14 +37,19 @@ const getAllNonSensitivePatients = async (_req: Request, res: Response, next: Ne
   }
 };
 
-const getSensitivePatientById = async (req: Request, res: Response, next: NextFunction) => {
+const getSensitivePatientById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const patient = await PatientModel.findById(req.params.id)
-      .populate('entries');
+    const patient = await PatientModel.findById(req.params.id).populate(
+      "entries"
+    );
     if (patient) {
       res.json(patient);
     } else {
-      res.status(404).send('Patient not found');
+      res.status(404).send("Patient not found");
     }
   } catch (error) {
     next(error);
@@ -53,17 +70,21 @@ const addPatient = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const addEntryToPatient = async (req: Request, res: Response, next: NextFunction) => {
+const addEntryToPatient = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const patientId = req.params.id;
 
   try {
     const diagnoses = await DiagnosisModel.find({});
-    const fetchedDiagnosisCodes = diagnoses.map(d => d.code);
+    const fetchedDiagnosisCodes = diagnoses.map((d) => d.code);
     setValidDiagnosisCodes(fetchedDiagnosisCodes);
 
     const patient = await PatientModel.findById(patientId);
     if (!patient) {
-      res.status(404).send('Patient not found');
+      res.status(404).send("Patient not found");
       return;
     }
 
@@ -81,7 +102,7 @@ const addEntryToPatient = async (req: Request, res: Response, next: NextFunction
         entry = new HealthCheckEntry(newEntryData);
         break;
       default:
-        throw new Error('Invalid entry type');
+        throw new Error("Invalid entry type");
     }
 
     const savedEntry = await entry.save();
@@ -90,7 +111,6 @@ const addEntryToPatient = async (req: Request, res: Response, next: NextFunction
     await patient.save();
 
     res.status(201).json(savedEntry);
-
   } catch (error) {
     next(error);
   }
@@ -100,5 +120,5 @@ export {
   getAllNonSensitivePatients,
   getSensitivePatientById,
   addPatient,
-  addEntryToPatient
+  addEntryToPatient,
 };

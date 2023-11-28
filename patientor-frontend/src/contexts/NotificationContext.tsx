@@ -1,13 +1,13 @@
-import { createContext, useReducer, ReactNode } from 'react';
+import { createContext, useReducer, ReactNode } from "react";
 
 export enum NotificationStatus {
-  Success = 'success',
-  Error = 'error'
+  Success = "success",
+  Error = "error",
 }
 
 export enum NotificationLocation {
-  Form = 'form',
-  PageTop = 'page-top'
+  Form = "form",
+  PageTop = "page-top",
 }
 
 interface NotificationState {
@@ -17,20 +17,34 @@ interface NotificationState {
 }
 
 type Action =
-  | { type: 'SET_NOTIFICATION'; payload: { message: string; status: NotificationStatus; location: NotificationLocation } }
-  | { type: 'CLEAR_NOTIFICATION' };
+  | {
+      type: "SET_NOTIFICATION";
+      payload: {
+        message: string;
+        status: NotificationStatus;
+        location: NotificationLocation;
+      };
+    }
+  | { type: "CLEAR_NOTIFICATION" };
 
-const initialState: NotificationState = { message: null, status: null, location: null };
+const initialState: NotificationState = {
+  message: null,
+  status: null,
+  location: null,
+};
 
-const notificationReducer = (state: NotificationState, action: Action): NotificationState => {
+const notificationReducer = (
+  state: NotificationState,
+  action: Action
+): NotificationState => {
   switch (action.type) {
-    case 'SET_NOTIFICATION':
+    case "SET_NOTIFICATION":
       return {
         message: action.payload.message,
         status: action.payload.status,
-        location: action.payload.location
+        location: action.payload.location,
       };
-    case 'CLEAR_NOTIFICATION':
+    case "CLEAR_NOTIFICATION":
       return initialState;
     default:
       return state;
@@ -39,25 +53,47 @@ const notificationReducer = (state: NotificationState, action: Action): Notifica
 
 type NotificationContextValues = [
   NotificationState,
-  ((message: string, status: NotificationStatus, location: NotificationLocation) => void) | (() => void)
-]
+  (
+    | ((
+        message: string,
+        status: NotificationStatus,
+        location: NotificationLocation
+      ) => void)
+    | (() => void)
+  )
+];
 
-export const NotificationContext = createContext<NotificationContextValues>([initialState, () => {
-  // This is a placeholder function that gets replaced by the actual function in the context provider.
-}]);
+export const NotificationContext = createContext<NotificationContextValues>([
+  initialState,
+  () => {
+    // This is a placeholder function that gets replaced by the actual function in the context provider.
+  },
+]);
 
 interface NotificationContextProviderProps {
   children: ReactNode;
 }
 
-export const NotificationContextProvider = ({ children }: NotificationContextProviderProps) => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, initialState);
+export const NotificationContextProvider = ({
+  children,
+}: NotificationContextProviderProps) => {
+  const [notification, notificationDispatch] = useReducer(
+    notificationReducer,
+    initialState
+  );
 
-  const showNotification = (message: string, status: NotificationStatus, location: NotificationLocation): void => {
-    notificationDispatch({ type: 'SET_NOTIFICATION', payload: { message, status, location } });
+  const showNotification = (
+    message: string,
+    status: NotificationStatus,
+    location: NotificationLocation
+  ): void => {
+    notificationDispatch({
+      type: "SET_NOTIFICATION",
+      payload: { message, status, location },
+    });
 
     setTimeout(() => {
-      notificationDispatch({ type: 'CLEAR_NOTIFICATION' });
+      notificationDispatch({ type: "CLEAR_NOTIFICATION" });
     }, 7000);
   };
 

@@ -1,8 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { DiagnosisModel } from '../models/diagnosis.model';
-import toNewDiagnosis from '../utils/toNewDiagnosis';
+import { Request, Response, NextFunction } from "express";
+import { DiagnosisModel } from "../models/diagnosis.model";
+import toNewDiagnosis from "../utils/toNewDiagnosis";
 
-const getDiagnoses = async (_req: Request, res: Response, next: NextFunction) => {
+const getDiagnoses = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const diagnoses = await DiagnosisModel.find({});
     res.json(diagnoses);
@@ -11,7 +15,11 @@ const getDiagnoses = async (_req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-const addDiagnosis = async (req: Request, res: Response, next: NextFunction) => {
+const addDiagnosis = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const newDiagnosis = toNewDiagnosis(req.body);
     const diagnosis = new DiagnosisModel(newDiagnosis);

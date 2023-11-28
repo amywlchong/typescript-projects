@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export interface Diagnosis {
   id: string;
@@ -8,7 +8,7 @@ export interface Diagnosis {
 }
 
 // type for diagnosis that is not saved yet
-export type NewDiagnosis = Omit<Diagnosis, 'id'>;
+export type NewDiagnosis = Omit<Diagnosis, "id">;
 
 export interface BaseEntry {
   id: string;
@@ -16,7 +16,7 @@ export interface BaseEntry {
   date: Date;
   specialist: string;
 
-  diagnosisCodes?: Array<Diagnosis['code']>;
+  diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
 export interface SickLeave {
@@ -30,16 +30,16 @@ export interface Discharge {
 }
 
 export enum HealthCheckRating {
-  'Healthy' = 0,
-  'LowRisk' = 1,
-  'HighRisk' = 2,
-  'CriticalRisk' = 3
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3,
 }
 
 export enum EntryType {
-  Hospital = 'Hospital',
-  OccupationalHealthcare = 'OccupationalHealthcare',
-  HealthCheck = 'HealthCheck'
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare",
+  HealthCheck = "HealthCheck",
 }
 
 export interface HospitalEntry extends BaseEntry {
@@ -63,18 +63,20 @@ export type Entry =
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
 
-export type BaseEntryWithoutId = Omit<BaseEntry, 'id'>;
+export type BaseEntryWithoutId = Omit<BaseEntry, "id">;
 
 // Define special omit for unions
-type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
 
 // Define Entry without the 'id' property
-export type EntryWithoutId = UnionOmit<Entry, 'id'>;
+export type EntryWithoutId = UnionOmit<Entry, "id">;
 
 export enum Gender {
-  Male = 'male',
-  Female = 'female',
-  Other = 'other',
+  Male = "male",
+  Female = "female",
+  Other = "other",
 }
 
 // type for stored data
@@ -89,7 +91,7 @@ export interface Patient {
 }
 
 // type for client-facing data
-export type NonSensitivePatient = Omit<Patient, 'idCardNumber' | 'entries'>;
+export type NonSensitivePatient = Omit<Patient, "idCardNumber" | "entries">;
 
 // type for patient that is not saved yet
-export type NewPatient = Omit<Patient, 'id' | 'entries'>;
+export type NewPatient = Omit<Patient, "id" | "entries">;
